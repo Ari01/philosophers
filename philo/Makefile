@@ -4,7 +4,9 @@ SRCS	=	atoi.c \
 			main.c \
 			print.c \
 			threads.c \
-			utils.c
+			utils.c \
+			philo.c \
+			actions.c
 
 OBJS	=	$(SRCS:.c=.o)
 

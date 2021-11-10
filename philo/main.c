@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 17:08:19 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/06 20:15:18 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/10 01:30:28 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,10 @@ int	check_args(t_info *info)
 		print_msg("error initializing mutex\n");
 		return (0);
 	}
-	if (info->number_of_philosophers <= 0 || info->time_to_die <= 0)
+	if (info->number_of_philosophers <= 0 || info->time_to_die <= 0
+		|| info->time_to_eat <= 0 || info->time_to_sleep <= 0)
 	{
-		print_msg("number of philosopher or time to die can't be less or equal to 0\n");
+		print_msg("number of philosopher and timers can't be less or equal to 0\n");
 		return (0);
 	}
 	return (1);
@@ -40,7 +41,7 @@ int	init_forks(t_fork *fork, int nforks)
 	}
 	while (i < nforks)
 	{
-		fork[i].state = AVAILABLE;
+		fork[i].status = AVAILABLE;
 		if (pthread_mutex_init(&fork[i].mutex, NULL))
 		{
 			print_msg("error initializing fork mutex\n");
@@ -51,6 +52,18 @@ int	init_forks(t_fork *fork, int nforks)
 	return (1);
 }
 
+unsigned long	get_time(char *arg)
+{
+	unsigned long	time;
+	int				tmp;
+
+	tmp = ft_atoi(arg);
+	if (tmp <= 0)
+		return (0);
+	time = tmp;
+	return (time);
+}
+
 int	get_args(int ac, char **av, t_info *info)
 {
 	info->forks = NULL;
@@ -58,9 +71,9 @@ int	get_args(int ac, char **av, t_info *info)
 	info->all_ate_count = 0;
 	info->philosopher_died = 0;
 	info->number_of_philosophers = ft_atoi(av[1]);
-	info->time_to_die = ft_atoi(av[2]);
-	info->time_to_eat = ft_atoi(av[3]);
-	info->time_to_sleep = ft_atoi(av[4]);
+	info->time_to_die = get_time(av[2]);
+	info->time_to_eat = get_time(av[3]);
+	info->time_to_sleep = get_time(av[4]);
 	if (ac == 6)
 		info->number_of_eat = ft_atoi(av[5]);
 	else

@@ -6,23 +6,11 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 17:44:23 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/06 20:52:13 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/10 00:02:06 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-t_philosopher	init_philosopher(t_info *info)
-{
-	t_philosopher	philo;
-
-	philo.number = info->current_philosopher;
-	info->current_philosopher++;
-	philo.status = THINKING;
-	philo.number_of_eat = 0;
-	philo.time_of_last_meal = info->time_start.tv_usec;
-	return (philo);
-}
 
 void	*run_thread(void *arg)
 {
@@ -30,9 +18,8 @@ void	*run_thread(void *arg)
 	t_philosopher	philo;
 
 	info = (t_info *)arg;
-	pthread_mutex_lock(&info->mutex);
-	philo = init_philosopher(info);
-	pthread_mutex_unlock(&info->mutex);
+	if (init_philosopher(&philo, info))
+		simulate(&philo, info);
 	return (NULL);
 }
 
@@ -47,7 +34,8 @@ pthread_t	*init_threads(t_info *info)
 	threads = malloc(sizeof(*threads) * info->number_of_philosophers);
 	if (!threads)
 		return (NULL);
-	if (gettimeofday(&info->time_start, NULL))
+	info->time_start = ft_gettime();
+	if (!info->time_start)
 		return (NULL);
 	while (i < info->number_of_philosophers)
 	{

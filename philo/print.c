@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 17:09:09 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/06 19:24:46 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/10 01:24:48 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,25 @@ void	print_number(int n)
 	}
 	else
 	{
-		print_number(n / 10);
+		print_number(unbr / 10);
 		c = unbr % 10 + '0';
+		write(1, &c, 1);
+	}
+}
+
+void	print_time(unsigned long n)
+{
+	char			c;
+
+	if (n / 10 == 0)
+	{
+		c = n + '0';
+		write(1, &c, 1);
+	}
+	else
+	{
+		print_time(n / 10);
+		c = n % 10 + '0';
 		write(1, &c, 1);
 	}
 }
@@ -60,5 +77,24 @@ void	print_info(t_info *info)
 	print_number(info->all_ate_count);
 	print_msg(", philosopher died = ");
 	print_number(info->philosopher_died);
+	print_msg("\n");
+}
+
+void	print_status(unsigned long timestamp, t_philosopher philo)
+{
+	print_time(timestamp / 1000);
+	print_msg(" ");
+	print_number(philo.number);
+	print_msg(" ");
+	if (philo.status == DIED)
+		print_msg("died");
+	else if (philo.status == FORK)
+		print_msg("has taken a fork");
+	else if (philo.status == EATING)
+		print_msg("is eating");
+	else if (philo.status == SLEEPING)
+		print_msg("is sleeping");
+	else if (philo.status == THINKING)
+		print_msg("is thinking");
 	print_msg("\n");
 }

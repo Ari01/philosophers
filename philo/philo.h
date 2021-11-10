@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 16:08:44 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/06 20:51:33 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/10 01:37:08 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 #include <sys/time.h>
 #include <stdio.h>
 
-
 /**********************	CONST ************************/
 
 /*	FORK STATE	*/
@@ -28,54 +27,66 @@
 
 /* PHILOSOPHER STATE	*/
 # define THINKING	0
-# define EATING		1
-# define SLEEPING	2
-# define DEAD		3
+# define FORK		1
+# define EATING		2
+# define SLEEPING	3
+# define DIED		4
 
 /**********************	STRUCT ************************/
 
 typedef	struct	s_fork
 {
-	int				state;
+	int				status;
 	pthread_mutex_t	mutex;
 }	t_fork;
 
 typedef	struct	s_info
 {
 	int				number_of_philosophers;
-	int				time_to_die;
-	int				time_to_eat;
-	int				time_to_sleep;
+	unsigned long	time_to_die;
+	unsigned long	time_to_eat;
+	unsigned long	time_to_sleep;
 	int				number_of_eat;
 	int				all_ate_count;
 	int				philosopher_died;
 	int				current_philosopher;
-	struct timeval	time_start;
+	unsigned long	time_start;
 	t_fork			*forks;
 	pthread_mutex_t	mutex;
 }	t_info;
 
 typedef struct	s_philosopher
 {
-	int			number;
-	int			status;
-	int			number_of_eat;
-	long int	time_of_last_meal;
+	int				number;
+	int				left;
+	int				right;
+	int				status;
+	int				number_of_eat;
+	unsigned long	time_of_last_meal;
 }	t_philosopher;
 
 /**********************	FUNCTIONS ************************/
 
 /*	UTILS	*/
-int			ft_atoi(char *s);
-int			ft_strlen(char *s);
+unsigned long	ft_gettime();
+float			get_timediff(unsigned long t1, unsigned long t2);
+int				ft_atoi(char *s);
+int				ft_strlen(char *s);
 
 /*	PRINT	*/
-void		print_msg(char *s);
-void		print_status(int status);
-void		print_info(t_info *info);
+void			print_msg(char *s);
+void			print_status(unsigned long timestamp, t_philosopher philo);
+void			print_info(t_info *info);
 
 /*	THREADS	*/
-pthread_t	*init_threads(t_info *info);
-int			wait_threads(pthread_t *threads, int nthreads);
+pthread_t		*init_threads(t_info *info);
+int				wait_threads(pthread_t *threads, int nthreads);
+
+/*	PHILO	*/
+int				init_philosopher(t_philosopher *philo, t_info *info);
+void			simulate(t_philosopher *philo, t_info *info);
+
+/*	ACTIONS	*/
+int				die(t_philosopher *philo, t_info *info);
 
 #endif
