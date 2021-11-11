@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 20:33:14 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/11 01:16:47 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/11 01:52:37 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	simulate(t_philosopher *philo, t_info *info)
 {
 	while (!end_simulation(philo, info))
 	{
-		/*if (philo->status == THINKING)
-			eat(philo, info);*/
+		if (philo->status == THINKING)
+			eat(philo, info);
 	}
 }
