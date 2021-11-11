@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 16:08:44 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/10 01:37:08 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/11 01:29:08 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ typedef	struct	s_info
 	int				all_ate_count;
 	int				philosopher_died;
 	int				current_philosopher;
-	unsigned long	time_start;
+	struct timeval	time_start;
 	t_fork			*forks;
 	pthread_mutex_t	mutex;
 }	t_info;
@@ -58,24 +58,24 @@ typedef	struct	s_info
 typedef struct	s_philosopher
 {
 	int				number;
-	int				left;
-	int				right;
+	t_fork			*lf;
+	t_fork			*rf;
 	int				status;
 	int				number_of_eat;
-	unsigned long	time_of_last_meal;
+	struct timeval	time_of_last_meal;
 }	t_philosopher;
 
 /**********************	FUNCTIONS ************************/
 
 /*	UTILS	*/
-unsigned long	ft_gettime();
-float			get_timediff(unsigned long t1, unsigned long t2);
+struct timeval	ft_gettime();
+float			get_timediff(struct timeval start);
 int				ft_atoi(char *s);
 int				ft_strlen(char *s);
 
 /*	PRINT	*/
 void			print_msg(char *s);
-void			print_status(unsigned long timestamp, t_philosopher philo);
+void			print_status(float timestamp, t_philosopher philo);
 void			print_info(t_info *info);
 
 /*	THREADS	*/
@@ -83,10 +83,11 @@ pthread_t		*init_threads(t_info *info);
 int				wait_threads(pthread_t *threads, int nthreads);
 
 /*	PHILO	*/
-int				init_philosopher(t_philosopher *philo, t_info *info);
+t_philosopher	init_philosopher(t_info *info);
 void			simulate(t_philosopher *philo, t_info *info);
 
 /*	ACTIONS	*/
 int				die(t_philosopher *philo, t_info *info);
+void			eat(t_philosopher *philo, t_info *info);
 
 #endif

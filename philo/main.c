@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 17:08:19 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/10 01:30:28 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/11 01:10:18 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,17 @@ int	check_args(t_info *info)
 	return (1);
 }
 
-int	init_forks(t_fork *fork, int nforks)
+t_fork	*init_forks(int nforks)
 {
-	int	i;
+	t_fork	*fork;
+	int		i;
 
 	i = 0;
-	fork = malloc(sizeof(t_fork) * nforks);
+	fork = malloc(sizeof(*fork) * nforks);
 	if (!fork)
 	{
 		print_msg("error initializing forks\n");
-		return (0);
+		return (NULL);
 	}
 	while (i < nforks)
 	{
@@ -45,11 +46,12 @@ int	init_forks(t_fork *fork, int nforks)
 		if (pthread_mutex_init(&fork[i].mutex, NULL))
 		{
 			print_msg("error initializing fork mutex\n");
-			return (0);
+			free(fork);
+			return (NULL);
 		}
 		i++;
 	}
-	return (1);
+	return (fork);
 }
 
 unsigned long	get_time(char *arg)
@@ -80,7 +82,8 @@ int	get_args(int ac, char **av, t_info *info)
 		info->number_of_eat = -1;
 	if (!check_args(info))
 		return (0);
-	if(!init_forks(info->forks, info->number_of_philosophers))
+	info->forks = init_forks(info->number_of_philosophers);
+	if(!info->forks)
 		return (0);
 	return (1);
 }

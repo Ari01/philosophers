@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 17:44:23 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/10 00:02:06 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/11 01:46:36 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ void	*run_thread(void *arg)
 	t_philosopher	philo;
 
 	info = (t_info *)arg;
-	if (init_philosopher(&philo, info))
-		simulate(&philo, info);
+	philo = init_philosopher(info);
+	simulate(&philo, info);
 	return (NULL);
 }
 
@@ -35,8 +35,6 @@ pthread_t	*init_threads(t_info *info)
 	if (!threads)
 		return (NULL);
 	info->time_start = ft_gettime();
-	if (!info->time_start)
-		return (NULL);
 	while (i < info->number_of_philosophers)
 	{
 		ret = pthread_create(&threads[i], NULL, run_thread, info);

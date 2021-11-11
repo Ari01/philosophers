@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 17:09:09 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/10 01:24:48 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/11 01:28:50 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,23 +41,6 @@ void	print_number(int n)
 	}
 }
 
-void	print_time(unsigned long n)
-{
-	char			c;
-
-	if (n / 10 == 0)
-	{
-		c = n + '0';
-		write(1, &c, 1);
-	}
-	else
-	{
-		print_time(n / 10);
-		c = n % 10 + '0';
-		write(1, &c, 1);
-	}
-}
-
 void	print_info(t_info *info)
 {
 	print_msg("current philosopher = ");
@@ -80,9 +63,9 @@ void	print_info(t_info *info)
 	print_msg("\n");
 }
 
-void	print_status(unsigned long timestamp, t_philosopher philo)
+void	print_status(float time, t_philosopher philo)
 {
-	print_time(timestamp / 1000);
+	print_number((int)time);
 	print_msg(" ");
 	print_number(philo.number);
 	print_msg(" ");

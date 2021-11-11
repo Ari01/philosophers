@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 20:40:50 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/10 01:39:39 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/11 01:51:40 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,67 +14,59 @@
 
 int	die(t_philosopher *philo, t_info *info)
 {
-	int				ret;
-	float			time_diff;
-	unsigned long	time;
+	int		ret;
+	float	time_diff;
 
 	ret = 0;
-	time = ft_gettime();
-	if (!time)
-		return (1);
-	time_diff = get_timediff(time, philo->time_of_last_meal);
-	//time_diff = (time - philo->time_of_last_meal) / 1000;
-	pthread_mutex_lock(&info->mutex);
-	printf("thread %d\n", philo->number);
-	printf("time diff = %ld - %ld = %f\n", time, philo->time_of_last_meal, time_diff);
-	pthread_mutex_unlock(&info->mutex);
-	if (info->time_to_die - time_diff <= 0.f)
+	time_diff = get_timediff(philo->time_of_last_meal);
+	if (time_diff >= info->time_to_die)
 	{
 		philo->status = DIED;
-		pthread_mutex_lock(&info->mutex);
 		info->philosopher_died = 1;
-		print_status(time, *philo);
-		pthread_mutex_unlock(&info->mutex);
+		print_status(time_diff, *philo);
 		ret = 1;
 	}
 	return (ret);
 }
 
-void	take_fork(t_fork *fork, t_philosopher *philo, t_info *info)
+int	take_fork(t_philosopher *philo, t_info *info)
 {
-	unsigned long	time;
+	float	timediff;
+	int		ret;
+	t_fork	*lf;
+	t_fork	*rf;
 
-	time = ft_gettime();
-	if (time && fork->status == AVAILABLE)
+	ret = 0;
+	lf = philo->lf;
+	rf = philo->rf;
+	timediff = get_timediff(info->time_start);
+	pthread_mutex_lock(&info->mutex);
+	pthread_mutex_lock(&lf->mutex);
+	pthread_mutex_lock(&rf->mutex);
+	if (lf->status == AVAILABLE && rf->status == AVAILABLE)
 	{
-		pthread_mutex_lock(&info->mutex);
-		pthread_mutex_lock(&fork->mutex);
 		philo->status = FORK;
-		print_status(time, *philo);
-		fork->status = BUSY;
-		pthread_mutex_unlock(&fork->mutex);
-		pthread_mutex_unlock(&info->mutex);
+		print_status(timediff, *philo);
+		lf->status = BUSY;
+		rf->status = BUSY;
+		ret = 1;
 	}
+	pthread_mutex_unlock(&lf->mutex);
+	pthread_mutex_unlock(&rf->mutex);
+	pthread_mutex_unlock(&info->mutex);
+	return (ret);
 }
 
 void	eat(t_philosopher *philo, t_info *info)
 {
-	t_fork			*lf;
-	t_fork			*rf;
-	unsigned long	time;
+	float	timediff;
 
-	lf = &info->forks[philo->left];
-	rf = &info->forks[philo->right];
-	if (philo->status == THINKING)
+	if (take_fork(philo, info))
 	{
-		if (lf->status == AVAILABLE && rf->status == AVAILABLE)
-		{
-			take_fork(lf, philo, info);
-			take_fork(rf, philo, info);
-			philo->status = EATING;
-			time = ft_gettime();
-			if (time)
-				philo->time_of_last_meal = time + info->time_to_eat;
-		}
+		philo->status = EATING;
+		timediff = get_timediff(info->time_start);
+		pthread_mutex_lock(&info->mutex);
+		print_status(timediff, *philo);
+		pthread_mutex_unlock(&info->mutex);
 	}
 }
