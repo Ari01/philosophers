@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 18:05:23 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/06 18:56:47 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/12 03:02:49 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int	ft_isspace(char c)
 {
-	return (c == '\t' || c == '\v' || c == '\f' ||
-		c == '\r' || c == '\n' || c == ' ');
+	return (c == '\t' || c == '\v' || c == '\f'
+		|| c == '\r' || c == '\n' || c == ' ');
 }
 
 int	ft_isdigit(char c)
@@ -51,7 +51,7 @@ int	ft_atoi(char *s)
 
 	i = 0;
 	sign = 1;
-	while(ft_isspace(s[i]))
+	while (ft_isspace(s[i]))
 		i++;
 	if (s[i] == '+' || s[i] == '-')
 	{

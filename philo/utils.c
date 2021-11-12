@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 17:09:33 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/11 01:50:22 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/12 03:04:45 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	ft_strlen(char *s)
 	return (i);
 }
 
-struct timeval	ft_gettime()
+struct timeval	ft_gettime(void)
 {
 	struct timeval	tv;
 

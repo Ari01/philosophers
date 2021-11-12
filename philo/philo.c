@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 20:33:14 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/11 01:52:37 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/12 02:35:16 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,9 @@ void	simulate(t_philosopher *philo, t_info *info)
 	{
 		if (philo->status == THINKING)
 			eat(philo, info);
+		else if (philo->status == EATING)
+			rest(philo, info);
+		else if (philo->status == SLEEPING)
+			think(philo, info);
 	}
 }

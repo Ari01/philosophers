@@ -6,7 +6,8 @@ SRCS	=	atoi.c \
 			threads.c \
 			utils.c \
 			philo.c \
-			actions.c
+			actions.c \
+			eat.c
 
 OBJS	=	$(SRCS:.c=.o)
 

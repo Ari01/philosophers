@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 17:08:19 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/11 01:10:18 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/12 03:04:12 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	check_args(t_info *info)
 	if (info->number_of_philosophers <= 0 || info->time_to_die <= 0
 		|| info->time_to_eat <= 0 || info->time_to_sleep <= 0)
 	{
-		print_msg("number of philosopher and timers can't be less or equal to 0\n");
+		print_msg("incorrect arg\n");
 		return (0);
 	}
 	return (1);
@@ -83,7 +83,7 @@ int	get_args(int ac, char **av, t_info *info)
 	if (!check_args(info))
 		return (0);
 	info->forks = init_forks(info->number_of_philosophers);
-	if(!info->forks)
+	if (!info->forks)
 		return (0);
 	return (1);
 }

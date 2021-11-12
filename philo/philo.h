@@ -6,18 +6,18 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 16:08:44 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/11 01:29:08 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/12 03:06:12 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
 
-#include <pthread.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/time.h>
-#include <stdio.h>
+# include <pthread.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <sys/time.h>
+# include <stdio.h>
 
 /**********************	CONST ************************/
 
@@ -34,13 +34,13 @@
 
 /**********************	STRUCT ************************/
 
-typedef	struct	s_fork
+typedef struct s_fork
 {
 	int				status;
 	pthread_mutex_t	mutex;
 }	t_fork;
 
-typedef	struct	s_info
+typedef struct s_info
 {
 	int				number_of_philosophers;
 	unsigned long	time_to_die;
@@ -55,7 +55,7 @@ typedef	struct	s_info
 	pthread_mutex_t	mutex;
 }	t_info;
 
-typedef struct	s_philosopher
+typedef struct s_philosopher
 {
 	int				number;
 	t_fork			*lf;
@@ -68,14 +68,14 @@ typedef struct	s_philosopher
 /**********************	FUNCTIONS ************************/
 
 /*	UTILS	*/
-struct timeval	ft_gettime();
+struct timeval	ft_gettime(void);
 float			get_timediff(struct timeval start);
 int				ft_atoi(char *s);
 int				ft_strlen(char *s);
 
 /*	PRINT	*/
 void			print_msg(char *s);
-void			print_status(float timestamp, t_philosopher philo);
+void			print_status(t_philosopher *philo, t_info *info);
 void			print_info(t_info *info);
 
 /*	THREADS	*/
@@ -88,6 +88,8 @@ void			simulate(t_philosopher *philo, t_info *info);
 
 /*	ACTIONS	*/
 int				die(t_philosopher *philo, t_info *info);
-void			eat(t_philosopher *philo, t_info *info);
+int				eat(t_philosopher *philo, t_info *info);
+void			rest(t_philosopher *philo, t_info *info);
+void			think(t_philosopher *philo, t_info *info);
 
 #endif

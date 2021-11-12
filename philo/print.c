@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 17:09:09 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/11 01:28:50 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/12 01:54:24 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,21 +63,24 @@ void	print_info(t_info *info)
 	print_msg("\n");
 }
 
-void	print_status(float time, t_philosopher philo)
+void	print_status(t_philosopher *philo, t_info *info)
 {
+	float	time;
+
+	time = get_timediff(info->time_start);
 	print_number((int)time);
 	print_msg(" ");
-	print_number(philo.number);
+	print_number(philo->number);
 	print_msg(" ");
-	if (philo.status == DIED)
+	if (philo->status == DIED)
 		print_msg("died");
-	else if (philo.status == FORK)
+	else if (philo->status == FORK)
 		print_msg("has taken a fork");
-	else if (philo.status == EATING)
+	else if (philo->status == EATING)
 		print_msg("is eating");
-	else if (philo.status == SLEEPING)
+	else if (philo->status == SLEEPING)
 		print_msg("is sleeping");
-	else if (philo.status == THINKING)
+	else if (philo->status == THINKING)
 		print_msg("is thinking");
 	print_msg("\n");
 }
