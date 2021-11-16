@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 20:33:14 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/12 02:35:16 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/16 17:47:30 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,12 @@ int	end_simulation(t_philosopher *philo, t_info *info)
 	int				ret;
 
 	ret = 0;
-	pthread_mutex_lock(&info->mutex);
-	if (info->all_ate_count == info->number_of_philosophers)
+	if (info->all_ate_count >= info->number_of_philosophers)
 		ret = 1;
 	else if (info->philosopher_died)
 		ret = 1;
 	else if (die(philo, info))
 		ret = 1;
-	pthread_mutex_unlock(&info->mutex);
 	return (ret);
 }
 

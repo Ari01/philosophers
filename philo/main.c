@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 17:08:19 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/12 03:04:12 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/16 14:58:49 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ t_fork	*init_forks(int nforks)
 	while (i < nforks)
 	{
 		fork[i].status = AVAILABLE;
+		fork[i].queue = NULL;
 		if (pthread_mutex_init(&fork[i].mutex, NULL))
 		{
 			print_msg("error initializing fork mutex\n");
@@ -98,21 +99,19 @@ int	main(int ac, char **av)
 		print_msg("error args\n");
 		return (1);
 	}
-	printf("getting arg\n");
 	if (!get_args(ac, av, &info))
 		return (1);
-	printf("initializing threads\n");
 	threads = init_threads(&info);
 	if (!threads)
 	{
 		print_msg("error creating threads\n");
 		return (1);
 	}
-	printf("waiting threads\n");
 	if (!wait_threads(threads, info.number_of_philosophers))
 	{
 		print_msg("error waiting for threads to finish\n");
 		return (1);
 	}
+	free(info.forks);
 	return (0);
 }

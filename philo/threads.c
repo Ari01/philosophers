@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 17:44:23 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/11 01:46:36 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/12 03:18:21 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,6 @@ int	wait_threads(pthread_t *threads, int nthreads)
 			return (0);
 		i++;
 	}
+	free(threads);
 	return (1);
 }

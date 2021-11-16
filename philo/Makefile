@@ -7,7 +7,8 @@ SRCS	=	atoi.c \
 			utils.c \
 			philo.c \
 			actions.c \
-			eat.c
+			eat.c \
+			list.c
 
 OBJS	=	$(SRCS:.c=.o)
 
@@ -19,6 +20,8 @@ all:		$(NAME)
 $(NAME):	$(OBJS)
 			$(CC) $(CFLAGS) $(OBJS) -o $@
 
+debug:		$(OBJS)
+			$(CC) $(CFLAGS) -g -fsanitize=address $(OBJS) -o $@
 .c.o:
 			$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
 

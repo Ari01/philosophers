@@ -1,25 +1,14 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   eat.c                                              :+:      :+:    :+:   */
+/*   fork.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/12 02:59:16 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/16 18:03:05 by dchheang         ###   ########.fr       */
+/*   Created: 2021/11/16 14:31:25 by dchheang          #+#    #+#             */
+/*   Updated: 2021/11/16 14:32:22 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "philo.h"
-
-int	check_queue(t_list *queue, int n)
-{
-	if (!queue)
-		return (1);
-	if (queue->value == n)
-		return (1);
-	return (0);
-}
 
 int	take_forks(t_philosopher *philo, t_info *info)
 {
@@ -77,39 +66,4 @@ void	drop_forks(t_philosopher *philo, t_info *info)
 	pthread_mutex_unlock(&lf->mutex);
 	pthread_mutex_unlock(&rf->mutex);
 	pthread_mutex_unlock(&info->mutex);
-}
-
-void	check_number_of_meal(t_philosopher *philo, t_info *info)
-{
-	if (info->number_of_eat != -1)
-	{
-		if (philo->number_of_eat == info->number_of_eat)
-		{
-			pthread_mutex_lock(&info->mutex);
-			info->all_ate_count++;
-			pthread_mutex_unlock(&info->mutex);
-		}
-	}
-}
-
-int	eat(t_philosopher *philo, t_info *info)
-{
-	if (info->number_of_philosophers == 1)
-		return (0);
-	if (take_forks(philo, info))
-	{
-		philo->status = EATING;
-		philo->time_of_last_meal = ft_gettime();
-		philo->number_of_eat++;
-		check_number_of_meal(philo, info);
-		pthread_mutex_lock(&info->mutex);
-		print_status(philo, info);
-		pthread_mutex_unlock(&info->mutex);
-		usleep(info->time_to_eat * 1000);
-		drop_forks(philo, info);
-		return (1);
-	}
-	else
-		usleep(50);
-	return (0);
 }

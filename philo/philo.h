@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/06 16:08:44 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/12 03:06:12 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/16 13:53:02 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,16 @@
 
 /**********************	STRUCT ************************/
 
+typedef struct	s_list
+{
+	int				value;
+	struct s_list	*next;
+}	t_list;
+
 typedef struct s_fork
 {
 	int				status;
+	t_list			*queue;
 	pthread_mutex_t	mutex;
 }	t_fork;
 
@@ -51,6 +58,7 @@ typedef struct s_info
 	int				philosopher_died;
 	int				current_philosopher;
 	struct timeval	time_start;
+	int				turn;
 	t_fork			*forks;
 	pthread_mutex_t	mutex;
 }	t_info;
@@ -91,5 +99,11 @@ int				die(t_philosopher *philo, t_info *info);
 int				eat(t_philosopher *philo, t_info *info);
 void			rest(t_philosopher *philo, t_info *info);
 void			think(t_philosopher *philo, t_info *info);
+
+/*	LIST	*/
+t_list			*ft_lstnew(int value);
+void			ft_lstadd_back(t_list **head, t_list *new);
+int				ft_lstfind(t_list *list, int value);
+void			ft_lstremove(t_list **list, int to_remove);
 
 #endif
