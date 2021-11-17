@@ -5,113 +5,122 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/06 17:08:19 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/16 14:58:49 by dchheang         ###   ########.fr       */
+/*   Created: 2021/11/17 03:55:32 by dchheang          #+#    #+#             */
+/*   Updated: 2021/11/17 08:36:09 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	check_args(t_info *info)
+int		check_info(t_info info)
 {
-	if (pthread_mutex_init(&info->mutex, NULL))
-	{
-		print_msg("error initializing mutex\n");
+	if (info.n_philo <= 0)
 		return (0);
-	}
-	if (info->number_of_philosophers <= 0 || info->time_to_die <= 0
-		|| info->time_to_eat <= 0 || info->time_to_sleep <= 0)
-	{
-		print_msg("incorrect arg\n");
+	if (info.time_to_die <= 0)
 		return (0);
-	}
+	if (info.time_to_eat <= 0)
+		return (0);
+	if (info.time_to_sleep <= 0)
+		return (0);
 	return (1);
 }
 
-t_fork	*init_forks(int nforks)
+int	init_info(char **av, t_info *info)
 {
-	t_fork	*fork;
-	int		i;
-
-	i = 0;
-	fork = malloc(sizeof(*fork) * nforks);
-	if (!fork)
+	info->current_philo = 0;
+	info->end_sim = 0;
+	info->all_ate = 0;
+	info->n_philo = ft_atoi(av[1]);
+	info->time_to_die = ft_atoi(av[2]);
+	info->time_to_eat = ft_atoi(av[3]);
+	info->time_to_sleep = ft_atoi(av[4]);
+	if (av[5])
 	{
-		print_msg("error initializing forks\n");
-		return (NULL);
+		info->n_eat = ft_atoi(av[5]);
+		if (info->n_eat <= 0)
+			return (0);
 	}
-	while (i < nforks)
+	else
+		info->n_eat = 0;
+	if (!check_info(*info))
+		return (0);
+	return (1);
+}
+
+int	init_philos(t_info *info)
+{
+	int	i;
+
+	info->philo = malloc(sizeof(t_philosopher) * info->n_philo);
+	if (!info->philo)
+		return (0);
+	i = 0;
+	while (i < info->n_philo)
 	{
-		fork[i].status = AVAILABLE;
-		fork[i].queue = NULL;
-		if (pthread_mutex_init(&fork[i].mutex, NULL))
-		{
-			print_msg("error initializing fork mutex\n");
-			free(fork);
-			return (NULL);
-		}
+		info->philo[i].id = i + 1;
+		info->philo[i].lf = i;
+		info->philo[i].rf = (i + 1) % info->n_philo;
+		info->philo[i].n_eat = 0;
+		info->philo[i].status = THINKING;
 		i++;
 	}
-	return (fork);
+	return (1);
 }
 
-unsigned long	get_time(char *arg)
+int	init_mutex(t_info *info)
 {
-	unsigned long	time;
-	int				tmp;
+	int	i;
 
-	tmp = ft_atoi(arg);
-	if (tmp <= 0)
+	i = 0;
+	info->fork = malloc(sizeof(t_fork) * info->n_philo);
+	if (!info->fork)
 		return (0);
-	time = tmp;
-	return (time);
-}
-
-int	get_args(int ac, char **av, t_info *info)
-{
-	info->forks = NULL;
-	info->current_philosopher = 1;
-	info->all_ate_count = 0;
-	info->philosopher_died = 0;
-	info->number_of_philosophers = ft_atoi(av[1]);
-	info->time_to_die = get_time(av[2]);
-	info->time_to_eat = get_time(av[3]);
-	info->time_to_sleep = get_time(av[4]);
-	if (ac == 6)
-		info->number_of_eat = ft_atoi(av[5]);
-	else
-		info->number_of_eat = -1;
-	if (!check_args(info))
+	while (i < info->n_philo)
+	{
+		info->fork[i].is_available = 1;
+		if (pthread_mutex_init(&info->fork[i].mutex, NULL))
+			return (0);
+		i++;
+	}
+	if (pthread_mutex_init(&info->print_mutex, NULL))
 		return (0);
-	info->forks = init_forks(info->number_of_philosophers);
-	if (!info->forks)
+	if (pthread_mutex_init(&info->eat_mutex, NULL))
 		return (0);
 	return (1);
+}
+
+void	print_info(t_info info)
+{
+	printf("n philo = %d\n", info.n_philo);
+	printf("t_die = %d\n", info.time_to_die);
+	printf("t_eat = %d\n", info.time_to_eat);
+	printf("t_sleep = %d\n", info.time_to_sleep);
+	printf("n eat = %d\n", info.n_eat);
+
+	int i = 0;
+	while (i < info.n_philo)
+	{
+		printf("id philo = %d\n", info.philo[i].id);
+		printf("lf = %d\n", info.philo[i].lf);
+		printf("rf = %d\n", info.philo[i].rf);
+		printf("n eat = %d\n", info.philo[i].n_eat);
+		i++;
+	}
 }
 
 int	main(int ac, char **av)
 {
-	t_info		info;
-	pthread_t	*threads;
+	t_info	info;
 
 	if (ac != 5 && ac != 6)
-	{
-		print_msg("error args\n");
-		return (1);
-	}
-	if (!get_args(ac, av, &info))
-		return (1);
-	threads = init_threads(&info);
-	if (!threads)
-	{
-		print_msg("error creating threads\n");
-		return (1);
-	}
-	if (!wait_threads(threads, info.number_of_philosophers))
-	{
-		print_msg("error waiting for threads to finish\n");
-		return (1);
-	}
-	free(info.forks);
+		printf("error: number of arguments\n");
+	else if (!init_info(av, &info))
+		printf("error: arguments\n");
+	else if (!init_philos(&info) || !init_mutex(&info))
+		printf("error: initializing info\n");
+	else if (!run(&info))
+		printf("error: threads\n");
+	free(info.philo);
+	free(info.fork);
 	return (0);
 }

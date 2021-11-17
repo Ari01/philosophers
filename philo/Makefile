@@ -1,14 +1,9 @@
 NAME	=	philo
 
-SRCS	=	atoi.c \
-			main.c \
-			print.c \
-			threads.c \
+SRCS	=	main.c \
 			utils.c \
-			philo.c \
-			actions.c \
-			eat.c \
-			list.c
+			threads.c \
+			actions.c
 
 OBJS	=	$(SRCS:.c=.o)
 
@@ -20,8 +15,6 @@ all:		$(NAME)
 $(NAME):	$(OBJS)
 			$(CC) $(CFLAGS) $(OBJS) -o $@
 
-debug:		$(OBJS)
-			$(CC) $(CFLAGS) -g -fsanitize=address $(OBJS) -o $@
 .c.o:
 			$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
 

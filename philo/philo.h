@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/06 16:08:44 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/16 13:53:02 by dchheang         ###   ########.fr       */
+/*   Created: 2021/11/17 03:34:31 by dchheang          #+#    #+#             */
+/*   Updated: 2021/11/17 15:42:56 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,96 +14,68 @@
 # define PHILO_H
 
 # include <pthread.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
 # include <sys/time.h>
-# include <stdio.h>
 
-/**********************	CONST ************************/
+/*********************** CONST *************************/
 
-/*	FORK STATE	*/
-# define AVAILABLE	0
-# define BUSY		1
-
-/* PHILOSOPHER STATE	*/
-# define THINKING	0
-# define FORK		1
+# define DEAD		0
+# define THINKING	1
 # define EATING		2
 # define SLEEPING	3
-# define DIED		4
 
-/**********************	STRUCT ************************/
-
-typedef struct	s_list
-{
-	int				value;
-	struct s_list	*next;
-}	t_list;
+/*********************** TYPES *************************/
 
 typedef struct s_fork
 {
-	int				status;
-	t_list			*queue;
+	int				is_available;
 	pthread_mutex_t	mutex;
 }	t_fork;
 
-typedef struct s_info
-{
-	int				number_of_philosophers;
-	unsigned long	time_to_die;
-	unsigned long	time_to_eat;
-	unsigned long	time_to_sleep;
-	int				number_of_eat;
-	int				all_ate_count;
-	int				philosopher_died;
-	int				current_philosopher;
-	struct timeval	time_start;
-	int				turn;
-	t_fork			*forks;
-	pthread_mutex_t	mutex;
-}	t_info;
-
 typedef struct s_philosopher
 {
-	int				number;
-	t_fork			*lf;
-	t_fork			*rf;
-	int				status;
-	int				number_of_eat;
-	struct timeval	time_of_last_meal;
+	int					id;
+	int					lf;
+	int					rf;
+	int					n_eat;
+	int					status;
+	unsigned long long	t_last_meal;
 }	t_philosopher;
 
-/**********************	FUNCTIONS ************************/
+typedef struct s_info
+{
+	int					n_philo;
+	int					time_to_die;
+	int					time_to_eat;
+	int					time_to_sleep;
+	int					n_eat;
+	int					current_philo;
+	int					end_sim;
+	int					all_ate;
+	unsigned long long	t_start;
+	t_philosopher		*philo;
+	t_fork				*fork;
+	pthread_mutex_t		print_mutex;
+	pthread_mutex_t		eat_mutex;
+}	t_info;
+
+/********************* FUNCTIONS ***********************/
 
 /*	UTILS	*/
-struct timeval	ft_gettime(void);
-float			get_timediff(struct timeval start);
-int				ft_atoi(char *s);
-int				ft_strlen(char *s);
-
-/*	PRINT	*/
-void			print_msg(char *s);
-void			print_status(t_philosopher *philo, t_info *info);
-void			print_info(t_info *info);
+int					ft_atoi(char *s);
+unsigned long long	get_time();
+unsigned long long	get_timediff(unsigned long long start);
+void				print_action(t_philosopher *philo, t_info *info, char *s);
+void				ft_sleep(unsigned long long time, t_info *info);
 
 /*	THREADS	*/
-pthread_t		*init_threads(t_info *info);
-int				wait_threads(pthread_t *threads, int nthreads);
-
-/*	PHILO	*/
-t_philosopher	init_philosopher(t_info *info);
-void			simulate(t_philosopher *philo, t_info *info);
+int					run(t_info *info);
 
 /*	ACTIONS	*/
-int				die(t_philosopher *philo, t_info *info);
-int				eat(t_philosopher *philo, t_info *info);
-void			rest(t_philosopher *philo, t_info *info);
-void			think(t_philosopher *philo, t_info *info);
-
-/*	LIST	*/
-t_list			*ft_lstnew(int value);
-void			ft_lstadd_back(t_list **head, t_list *new);
-int				ft_lstfind(t_list *list, int value);
-void			ft_lstremove(t_list **list, int to_remove);
+void				eat(t_philosopher *philo, t_info *info);
+void				rest(t_philosopher *philo, t_info *info);
+void				think(t_philosopher *philo, t_info *info);
 
 #endif

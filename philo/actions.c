@@ -5,54 +5,75 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/09 20:40:50 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/16 18:19:20 by dchheang         ###   ########.fr       */
+/*   Created: 2021/11/17 06:13:11 by dchheang          #+#    #+#             */
+/*   Updated: 2021/11/17 16:57:21 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	die(t_philosopher *philo, t_info *info)
+int	take_forks(t_philosopher *philo, t_info *info)
 {
+	t_fork	*lf;
+	t_fork	*rf;
 	int		ret;
-	float	time_diff;
 
 	ret = 0;
-	time_diff = get_timediff(philo->time_of_last_meal);
-	if (info->time_to_die - time_diff <= 0.f)
+	lf = &info->fork[philo->lf];
+	rf = &info->fork[philo->rf];
+	pthread_mutex_lock(&lf->mutex);
+	pthread_mutex_lock(&rf->mutex);
+	if (lf->is_available && rf->is_available)
 	{
-		pthread_mutex_lock(&info->mutex);
-		philo->status = DIED;
-		info->philosopher_died = 1;
-		print_status(philo, info);
-		pthread_mutex_unlock(&info->mutex);
+		print_action(philo, info, "has taken a fork");
+		print_action(philo, info, "has taken a fork");
+		lf->is_available = 0;
+		rf->is_available = 0;
 		ret = 1;
 	}
 	return (ret);
 }
 
+void	drop_forks(t_philosopher *philo, t_info *info)
+{
+	t_fork	*lf;
+	t_fork	*rf;
+
+	lf = &info->fork[philo->lf];
+	rf = &info->fork[philo->rf];
+	lf->is_available = 1;
+	rf->is_available = 1;
+	pthread_mutex_unlock(&lf->mutex);
+	pthread_mutex_unlock(&rf->mutex);
+}
+
+void	eat(t_philosopher *philo, t_info *info)
+{
+	if (info->n_philo == 1)
+		return ;
+	if (take_forks(philo, info))
+	{
+		print_action(philo, info, "is eating");
+		pthread_mutex_lock(&info->eat_mutex);
+		philo->t_last_meal = get_time();
+		philo->n_eat++;
+		pthread_mutex_unlock(&info->eat_mutex);
+		ft_sleep(info->time_to_eat, info);
+		drop_forks(philo, info);
+		philo->status = EATING;
+	}
+}
+
 void	rest(t_philosopher *philo, t_info *info)
 {
-	float	time_to_sleep;
-
+	print_action(philo, info, "is sleeping");
+	ft_sleep(info->time_to_sleep, info);
 	philo->status = SLEEPING;
-	pthread_mutex_lock(&info->mutex);
-	print_status(philo, info);
-	pthread_mutex_unlock(&info->mutex);
-	time_to_sleep = get_timediff(philo->time_of_last_meal) + info->time_to_sleep;
-	if (time_to_sleep - info->time_to_die > 0.f)
-	{
-		time_to_sleep -= info->time_to_die;
-		usleep(((unsigned long)time_to_sleep) * 1000);
-	}
-	else
-		usleep((info->time_to_sleep - (unsigned long)get_timediff(philo->time_of_last_meal)) * 1000);
 }
 
 void	think(t_philosopher *philo, t_info *info)
 {
+	print_action(philo, info, "is thinking");
 	philo->status = THINKING;
-	pthread_mutex_lock(&info->mutex);
-	print_status(philo, info);
-	pthread_mutex_unlock(&info->mutex);
 }
+
