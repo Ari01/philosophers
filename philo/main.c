@@ -6,13 +6,13 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 03:55:32 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/17 08:36:09 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/18 10:58:22 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int		check_info(t_info info)
+int	check_info(t_info info)
 {
 	if (info.n_philo <= 0)
 		return (0);
@@ -41,7 +41,7 @@ int	init_info(char **av, t_info *info)
 			return (0);
 	}
 	else
-		info->n_eat = 0;
+		info->n_eat = -1;
 	if (!check_info(*info))
 		return (0);
 	return (1);
@@ -72,13 +72,12 @@ int	init_mutex(t_info *info)
 	int	i;
 
 	i = 0;
-	info->fork = malloc(sizeof(t_fork) * info->n_philo);
+	info->fork = malloc(sizeof(pthread_mutex_t) * info->n_philo);
 	if (!info->fork)
 		return (0);
 	while (i < info->n_philo)
 	{
-		info->fork[i].is_available = 1;
-		if (pthread_mutex_init(&info->fork[i].mutex, NULL))
+		if (pthread_mutex_init(&info->fork[i], NULL))
 			return (0);
 		i++;
 	}
@@ -87,25 +86,6 @@ int	init_mutex(t_info *info)
 	if (pthread_mutex_init(&info->eat_mutex, NULL))
 		return (0);
 	return (1);
-}
-
-void	print_info(t_info info)
-{
-	printf("n philo = %d\n", info.n_philo);
-	printf("t_die = %d\n", info.time_to_die);
-	printf("t_eat = %d\n", info.time_to_eat);
-	printf("t_sleep = %d\n", info.time_to_sleep);
-	printf("n eat = %d\n", info.n_eat);
-
-	int i = 0;
-	while (i < info.n_philo)
-	{
-		printf("id philo = %d\n", info.philo[i].id);
-		printf("lf = %d\n", info.philo[i].lf);
-		printf("rf = %d\n", info.philo[i].rf);
-		printf("n eat = %d\n", info.philo[i].n_eat);
-		i++;
-	}
 }
 
 int	main(int ac, char **av)

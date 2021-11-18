@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 04:32:01 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/17 17:01:32 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/18 10:57:32 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	ft_atoi(char *s)
 	return (n * sign);
 }
 
-unsigned long long	get_time()
+unsigned long long	get_time(void)
 {
 	struct timeval	tv;
 
@@ -42,7 +42,7 @@ unsigned long long	get_time()
 
 unsigned long long	get_timediff(unsigned long long start)
 {
-	unsigned long long end;
+	unsigned long long	end;
 
 	end = get_time();
 	return (end - start);
@@ -51,7 +51,8 @@ unsigned long long	get_timediff(unsigned long long start)
 void	print_action(t_philosopher *philo, t_info *info, char *s)
 {
 	pthread_mutex_lock(&info->print_mutex);
-	printf("%llu %d %s\n", get_timediff(info->t_start), philo->id, s);
+	if (!info->end_sim)
+		printf("%llu %d %s\n", get_timediff(info->t_start), philo->id, s);
 	pthread_mutex_unlock(&info->print_mutex);
 }
 

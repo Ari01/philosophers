@@ -6,7 +6,7 @@
 /*   By: dchheang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 05:01:57 by dchheang          #+#    #+#             */
-/*   Updated: 2021/11/17 17:12:20 by dchheang         ###   ########.fr       */
+/*   Updated: 2021/11/18 10:15:59 by dchheang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,49 +23,16 @@ void	*run_philo(void *arg)
 	while (!info->end_sim)
 	{
 		if (philo->status == THINKING)
+		{
 			eat(philo, info);
+			if (info->all_ate)
+				break ;
+		}
 		else if (philo->status == EATING)
 			rest(philo, info);
 		else if (philo->status == SLEEPING)
 			think(philo, info);
 	}
-	return (NULL);
-}
-
-void	*check_end_sim(void *arg)
-{
-	t_info	*info;
-	int		i;
-
-	info = (t_info *)arg;
-	while (!info->end_sim)
-	{
-		i = 0;
-		while (i < info->n_philo && !info->end_sim)
-		{
-			pthread_mutex_lock(&info->eat_mutex);
-			if (get_timediff(info->philo[i].t_last_meal) >= (unsigned long long)info->time_to_die)
-			{
-				info->end_sim = 1;
-				print_action(&info->philo[i], info, "died");
-				info->philo[i].status = DEAD;
-			}
-			pthread_mutex_unlock(&info->eat_mutex);
-		/*	if (info->philo[i].n_eat > info->n_eat)
-				info->all_ate++;*/
-			i++;
-			usleep(100);
-		}
-		if (info->end_sim)
-			break;
-		/*if (info->all_ate == info->n_philo)
-		{
-			pthread_mutex_lock(&info->eat_mutex);
-			info->end_sim = 1;
-			pthread_mutex_unlock(&info->eat_mutex);
-		}*/
-	}
-	printf("end\n");
 	return (NULL);
 }
 
